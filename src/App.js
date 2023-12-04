@@ -9,9 +9,14 @@ import Detail from './routes/detail.js';
 
 function App() {
 
-  let [shoes] = useState(data)
-  let [imgs] = useState(['black_white.png', 'red.png', 'grey.png'])
+  let [shoes,setShoes] = useState(data)
   let navigate = useNavigate();
+
+  function Sort(){
+    let copy = [...shoes];
+    copy = copy.sort((a,b) => a.title.toLowerCase() < b.title.toLowerCase() ? -1:1);
+    setShoes(copy);
+  }
   
   return (
     <div className="App">
@@ -26,13 +31,11 @@ function App() {
         </Container>
       </Navbar>
 
-      
-
       <Routes>
         <Route path='/' element={
-          <Home shoes={shoes} imgs={imgs}/>
+          <Home shoes={shoes}/>
         }/>
-        <Route path='/detail' element={ <Detail/ >} />
+        <Route path='/detail/:id' element={ <Detail shoes = { shoes } />} />
         <Route path='/event' element={ <About/> }> 
           <Route path='one' element={ <div>첫 주문시 양배추즙 서비스</div> }/>
           <Route path='two' element={ <div>생일기념 쿠폰받기</div> }/>
@@ -40,8 +43,7 @@ function App() {
         <Route path='*' element={ <div>없는페이지</div> }/>
       </Routes>
       
-      <br/><Button variant="outline-dark">Dark</Button>
-      <Button variant="outline-secondary">Secondary</Button>
+      <br/><Button variant="outline-dark" onClick={ Sort } >정렬</Button>
     </div>
   );
 }
@@ -65,7 +67,7 @@ function Home(props){
           {
             props.shoes.map((a,i)=>{
               return(
-                <Content title={props.shoes[i].title} content={props.shoes[i].content} price={props.shoes[i].price} imgs={props.imgs[i]}/>
+                <Content title={props.shoes[i].title} content={props.shoes[i].content} price={props.shoes[i].price} image={props.shoes[i].image}/>
               )
             })
           }
@@ -78,7 +80,7 @@ function Home(props){
 function Content(props){
   return (
     <Col>
-      <img src={process.env.PUBLIC_URL + './imgs/' + props.imgs} width="80%"/>
+      <img src={props.image} width="80%"/>
       <h4>{props.title}</h4>
       <p>{props.content}</p>
       <p>{props.price}원</p>
